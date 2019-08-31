@@ -14,7 +14,7 @@ final class MainVC: UIViewController {
     
     private let topBar: ClearTopBar = {
         let topBar = ClearTopBar()
-        topBar.title = "Instories"
+        topBar.title = "Story Viewer"
         topBar.includeRightButton = true
         topBar.setRightButtonImage(UIImage(named: "SettingsIcon"))
         topBar.titleFont = Fonts.topBar

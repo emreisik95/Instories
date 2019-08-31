@@ -27,7 +27,11 @@ final class StoriesVC: UIViewController {
         let layout = UICollectionViewFlowLayout()
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.showsVerticalScrollIndicator = false
-        collectionView.contentInsetAdjustmentBehavior = .never
+        if #available(iOS 11.0, *) {
+            collectionView.contentInsetAdjustmentBehavior = .never
+        } else {
+            // Fallback on earlier versions
+        }
         collectionView.backgroundColor = .white
         return collectionView
     }()
@@ -51,6 +55,7 @@ final class StoriesVC: UIViewController {
         super.viewDidLoad()
         setupViews()
         getStories()
+        
     }
     
     override func viewWillLayoutSubviews() {
@@ -109,12 +114,18 @@ final class StoriesVC: UIViewController {
     
     private func getStories() {
         startIndicator()
-        StoryService.getStories(for: user) { stories in
+        StoryService.getHikayes(for: user) { stories in
             self.stopIndicator()
             self.stories = stories
             self.checkStoriesCount()
             self.reloadCollectionView()
         }
+     /*   StoryService.getStories(for: user) { stories in
+            self.stopIndicator()
+            self.stories = stories
+            self.checkStoriesCount()
+            self.reloadCollectionView()
+        }*/
     }
     
     private func checkStoriesCount() {
@@ -164,7 +175,7 @@ extension StoriesVC: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         let view = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: ProfileHeader.reuseId, for: indexPath) as! ProfileHeader
         view.setAvatar(user.avatarImage)
-        view.setUsername(user.username)
+        view.setUsername(user.fullName)
         return view
     }
 }
@@ -175,7 +186,7 @@ extension StoriesVC: UICollectionViewDelegateFlowLayout {
         let story = stories[indexPath.item]
         let storyVC = StoryVC()
         storyVC.story = story
-        storyVC.transitioningDelegate = storyTransitionManager
+        storyVC.modalTransitionStyle = .coverVertical
         present(storyVC, animated: true)
     }
 }

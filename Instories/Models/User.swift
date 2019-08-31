@@ -18,9 +18,12 @@ final class User {
     
     var avatarImage: UIImage?
     
-    init(id: String, username: String, avatarUrl: URL) {
+    var fullName: String
+    
+    init(id: String, username: String, avatarUrl: URL, fullName: String) {
         self.id = id
         self.username = username
         self.avatarUrl = avatarUrl
+        self.fullName = fullName
     }
 }

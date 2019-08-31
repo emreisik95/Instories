@@ -45,13 +45,13 @@ final class UserService {
                     }
                 }
                 
-                guard let username = userDict["username"] as? String, let avatarUrlStr = userDict["profile_pic_url"] as? String, let avatarUrl = avatarUrlStr.url, let id = userDict["pk"] as? String else {
+                guard let username = userDict["username"] as? String, let avatarUrlStr = userDict["profile_pic_url"] as? String, let avatarUrl = avatarUrlStr.url, let id = userDict["pk"] as? String, let fullName = userDict["full_name"] as? String else {
                     return DispatchQueue.main.async {
                         completion([])
                     }
                 }
                 
-                let user = User(id: id, username: username, avatarUrl: avatarUrl)
+                let user = User(id: id, username: username, avatarUrl: avatarUrl, fullName: fullName)
                 users.append(user)
             }
             

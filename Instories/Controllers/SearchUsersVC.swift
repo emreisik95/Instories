@@ -35,7 +35,11 @@ final class SearchUsersVC: UIViewController {
         layout.sectionInset.bottom = 20
         layout.minimumLineSpacing = 14
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        collectionView.contentInsetAdjustmentBehavior = .never
+        if #available(iOS 11.0, *) {
+            collectionView.contentInsetAdjustmentBehavior = .never
+        } else {
+            // Fallback on earlier versions
+        }
         collectionView.backgroundColor = .white
         return collectionView
     }()

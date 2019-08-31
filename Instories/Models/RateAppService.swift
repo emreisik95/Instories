@@ -35,11 +35,19 @@ final class RateAppService {
     }
     
     private class func requestReview() {
-        SKStoreReviewController.requestReview()
+        if #available(iOS 10.3, *) {
+            SKStoreReviewController.requestReview()
+        } else {
+            // Fallback on earlier versions
+        }
     }
     
     class func openAppStore() {
         let appStoreURL = URL(string: "itms-apps://itunes.apple.com/app/\(AppInfo.appId)?mt=8&action=write-review")!
-        UIApplication.shared.open(appStoreURL, options: [:])
+        if #available(iOS 10.0, *) {
+            UIApplication.shared.open(appStoreURL, options: [:])
+        } else {
+            // Fallback on earlier versions
+        }
     }
 }

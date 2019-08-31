@@ -10,7 +10,83 @@ import Foundation
 
 final class StoryService {
     
-    static func getStories(for user: User, completion: @escaping ([Story]) -> ()) {
+    static func getHikayes(for user: User, completion: @escaping ([Story]) -> ()) {
+        var previewUrl = [URL]()
+        let storyPreviewString = "https://api.story.sybeta.tech/story/\(user.id)"
+        
+        guard let preview = storyPreviewString.url else {
+            return completion([])
+        }
+        
+        URLSession.shared.dataTask(with: preview) { dataa, responsee, errror in
+            guard let dataaa = dataa, errror == nil else {
+                return DispatchQueue.main.async {
+                    completion([])
+                }
+            }
+            print("işledi")
+            guard let json = (try? JSONSerialization.jsonObject(with: dataaa)) as? Json else {
+                return DispatchQueue.main.async {
+                    completion([])
+                }
+            }
+            
+            guard let dataJson = json["data"] as? Json, let storiesJson = dataJson["stories"] as? [Json] else {
+                return DispatchQueue.main.async {
+                    completion([])
+                }
+            }
+            
+            
+            for storyJson in storiesJson {
+                guard let imageUrlStr = storyJson["preview"] as? String, let imageUrl = imageUrlStr.url, let timestamp = storyJson["timestamp"] as? Int else {
+                    return DispatchQueue.main.async {
+                        completion([])
+                    }
+                }
+                print(imageUrl)
+                previewUrl.append(imageUrl)
+            }
+
+        
+        let urlString = "http://storyviewer-env.rg3cqxriqr.us-east-2.elasticbeanstalk.com/?kullanici=\(user.username)"
+        guard let url = urlString.url else {
+            return completion([])
+        }
+        URLSession.shared.dataTask(with: url) { data, response, error in
+            guard let data = data, error == nil else {
+                return DispatchQueue.main.async {
+                    completion([])
+                }
+            }
+            
+            guard let json = (try? JSONSerialization.jsonObject(with: data)) as? Json else {
+                return DispatchQueue.main.async {
+                    completion([])
+                }
+            }
+            
+            var stories = [Story]()
+            var i = 0
+            print("işleme \(previewUrl)")
+            for storyJson in json["icerik"] as! [String] {
+                if storyJson.contains("mp4"){
+                    let story = Story(imageUrl: previewUrl[i], timestamp: 1, videoUrl: URL(string: storyJson))
+                    stories.append(story)
+                }else{
+                    let story = Story(imageUrl: URL(string: storyJson)!, timestamp: 1, videoUrl: nil)
+                    stories.append(story)
+                }
+                i+=1 
+            }
+            DispatchQueue.main.async {
+                completion(stories)
+            }
+            }.resume()
+        }.resume()
+    }
+    
+ /*   static func getStories(for user: User, completion: @escaping ([Story]) -> ()) {
         let urlString = "https://api.story.sybeta.tech/story/\(user.id)"
         
         guard let url = urlString.url else {
@@ -118,5 +194,5 @@ final class StoryService {
             }
             
         }.resume()
-    }
+    }*/
 }

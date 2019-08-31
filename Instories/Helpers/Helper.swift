@@ -70,13 +70,17 @@ extension AVAsset {
         //setup video writer
         let asset = AVAsset(url: inputURL)
         let videoTrack = asset.tracks(withMediaType: AVMediaType.video).first!
-        let writerSettings: [String : Any] = [AVVideoCodecKey : AVVideoCodecType.h264, AVVideoCompressionPropertiesKey : [AVVideoAverageBitRateKey : 1800000], AVVideoWidthKey : 1280, AVVideoHeightKey : 720]
+        if #available(iOS 11.0, *) {
+            let writerSettings: [String : Any] = [AVVideoCodecKey : AVVideoCodecType.h264, AVVideoCompressionPropertiesKey : [AVVideoAverageBitRateKey : 1800000], AVVideoWidthKey : 1280, AVVideoHeightKey : 720]
+        } else {
+            // Fallback on earlier versions
+        }
         
-        let writerInput = AVAssetWriterInput(mediaType: AVMediaType.video, outputSettings: writerSettings)
-        writerInput.expectsMediaDataInRealTime = true
-        writerInput.transform = videoTrack.preferredTransform
+   //     let writerInput = AVAssetWriterInput(mediaType: AVMediaType.video, outputSettings: writerSettings)
+    //    writerInput.expectsMediaDataInRealTime = true
+    //    writerInput.transform = videoTrack.preferredTransform
         let writer = try! AVAssetWriter(outputURL: outputURL, fileType: AVFileType.mov)
-        writer.add(writerInput)
+     //   writer.add(writerInput)
         //setup video reader
         let readerSettings: [String : Any] = [String(kCVPixelBufferPixelFormatTypeKey) : Int(kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange)]
         
@@ -99,7 +103,7 @@ extension AVAsset {
         writer.startSession(atSourceTime: CMTime.zero)
         let processingQueue = DispatchQueue(label: "Queue1")
         
-        writerInput.requestMediaDataWhenReady(on: processingQueue)
+   /*     writerInput.requestMediaDataWhenReady(on: processingQueue)
         {
             while writerInput.isReadyForMoreMediaData
             {
@@ -143,7 +147,7 @@ extension AVAsset {
                     }
                 }
             }
-        }
+        }*/
     }
 }
 

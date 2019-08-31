@@ -33,7 +33,11 @@ final class SettingsVC: UIViewController {
         layout.sectionInset.bottom = 30
         layout.minimumLineSpacing = 14
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        collectionView.contentInsetAdjustmentBehavior = .never
+        if #available(iOS 11.0, *) {
+            collectionView.contentInsetAdjustmentBehavior = .never
+        } else {
+            // Fallback on earlier versions
+        }
         collectionView.showsVerticalScrollIndicator = false
         collectionView.backgroundColor = .white
         return collectionView
